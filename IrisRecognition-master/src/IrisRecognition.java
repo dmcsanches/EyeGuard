@@ -833,7 +833,8 @@ public class IrisRecognition {
 		iris_r = houghCircle.r;
 
 
-		//CircleImafindCircleBruteForce(houghCircle,houghCircle.r,origFiltered,width,height);ge = new Image(Display.getDefault(),AWTBufferedImageSWTImage.createSWTimage(origFiltered,width,height));
+		//findCircleBruteForce(houghCircle,houghCircle.r,origFiltered,width,height);
+		CircleImage = new Image(Display.getDefault(),AWTBufferedImageSWTImage.createSWTimage(origFiltered,width,height));
 		Image imgScaled = new Image(Display.getDefault(), CircleImage.getImageData().scaledTo((int)(canvasImage4.getBounds().width),(int)(canvasImage4.getBounds().height)));
 		imgScaled2 = new Image(Display.getDefault(), image.getImageData().scaledTo((int)(canvasImage4.getBounds().width),(int)(canvasImage4.getBounds().height)));
 
