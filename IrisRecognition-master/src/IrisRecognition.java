@@ -513,7 +513,7 @@ public class IrisRecognition {
 		sShell.setLayout(null);
 		textFileUrl = new Text(sShell, SWT.BORDER);
 		textFileUrl.setBounds(new Rectangle(15, 18, 215, 19));
-		textFileUrl.setText("res/osoba7a.jpg");
+		textFileUrl.setText("res/osobaa1.jpg");
 		buttonFileUrl = new Button(sShell, SWT.NONE);
 		buttonFileUrl.setBounds(new Rectangle(240, 15, 101, 25));
 		buttonFileUrl.setText("Select file...");

@@ -6,5 +6,7 @@
 	<classpathentry kind="lib" path="libs/ij.jar"/>
 	<classpathentry kind="lib" path="libs/ImageEditor.jar"/>
 	<classpathentry kind="lib" path="libs/swt64.jar"/>
+	<classpathentry kind="lib" path="irisid-td100-api.jar"/>
+	<classpathentry kind="lib" path="libs"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
