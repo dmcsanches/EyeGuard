@@ -1,6 +1,8 @@
 
 import ij.ImagePlus;
 
+import java.awt.EventQueue;
+import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.awt.image.PixelGrabber;
 import java.io.File;
@@ -492,6 +494,30 @@ public class IrisRecognition {
 		 * For example, on Windows the Eclipse SWT 3.1 plugin jar is:
 		 *       installation_directory\plugins\org.eclipse.swt.win32_3.1.0.jar
 		 */
+		
+		EventQueue.invokeLater(new Runnable()
+		{
+		    public void run()
+		    {
+			try
+			{
+			    /*
+			     * The Point gives the co-ordinates of the Center of the
+			     * Screen excluding the taskbar. The UI Launches from the
+			     * points calculated below.
+			     */
+
+				MainFrame frame = new MainFrame();
+			    java.awt.Point screenCenter = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
+			    frame.setLocation(screenCenter.x - (frame.getWidth() / 2), screenCenter.y - (frame.getHeight() / 2));
+			    frame.setVisible(true);
+			} catch (Exception e)
+			{
+			    e.printStackTrace();
+			}
+		    }
+		});
+		
 		Display display = Display.getDefault();
 		IrisRecognition thisClass = new IrisRecognition();
 		thisClass.createSShell();

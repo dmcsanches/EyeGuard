@@ -220,7 +220,8 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 		     * Screen excluding the taskbar. The UI Launches from the
 		     * points calculated below.
 		     */
-		    MainFrame frame = new MainFrame();
+
+			MainFrame frame = new MainFrame();
 		    Point screenCenter = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
 		    frame.setLocation(screenCenter.x - (frame.getWidth() / 2), screenCenter.y - (frame.getHeight() / 2));
 		    frame.setVisible(true);
@@ -261,7 +262,7 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
     System.out.println("Version: " + versionNumber);
     String titleVersion = versionNumber.toString();
 	
-    setTitle("iCAM TD100 SDK Sample (Java) v" + titleVersion);
+    setTitle("iCAM TD100 Control v" + titleVersion);
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	setSize(1029, 733);
 
@@ -1478,8 +1479,6 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 		lblRightIrisCapture.setIcon(null);
 		lblLeftIrisCapture.setIcon(null);
 		lblFaceCaptureImage.setIcon(null);
-		lblSceneCapture.setIcon(null);
-		chckbxSaveFaceImage.setEnabled(false);
 		btnSaveSelectedImages.setEnabled(false);
 		chckbxSaveSceneImage.setEnabled(false);
 		chckbxSaveIrisImages.setEnabled(false);
