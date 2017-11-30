@@ -111,8 +111,8 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 	public static final String IMAGE_PATH = "images/App.png";
 	public static final String FACE_FOLDER = "Face";
 	public static final String SCENE_FOLDER = "Scene";
-	public static final String RECOGNITION_FOLDER = "Recognition";
-	public static final String ENROLLMENT_FOLDER = "Enrollment";
+	public static final String RECOGNITION_FOLDER = "res";
+	public static final String ENROLLMENT_FOLDER = "Fotos Olhos";
 	
 	// Language
     public static final int LNG_NONE = 0;
@@ -122,7 +122,7 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
     public static final int LNG_CHINESE_MANDARIN = 4;
     public static final int LNG_CHINESE_CANTONESE = 5;
 
-    TD100 jtd100 = new TD100();
+    static TD100 jtd100 = new TD100();
     BMPFile bmpFile = new BMPFile();
     StringBuffer sbSerialNumber = null;
     StringBuffer versionNumber = null;
@@ -220,7 +220,8 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 		     * Screen excluding the taskbar. The UI Launches from the
 		     * points calculated below.
 		     */
-		    MainFrame frame = new MainFrame();
+
+			MainFrame frame = new MainFrame();
 		    Point screenCenter = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
 		    frame.setLocation(screenCenter.x - (frame.getWidth() / 2), screenCenter.y - (frame.getHeight() / 2));
 		    frame.setVisible(true);
@@ -261,7 +262,7 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
     System.out.println("Version: " + versionNumber);
     String titleVersion = versionNumber.toString();
 	
-    setTitle("iCAM TD100 SDK Sample (Java) v" + titleVersion);
+    setTitle("iCAM TD100 Control v" + titleVersion);
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	setSize(1029, 733);
 
@@ -310,19 +311,9 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 	panelLeftIris.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 	panelLeftIris.setSize(360, 270);
 
-	lblRightIris = new JLabel("Right Iris");
-	lblRightIris.setFont(new Font("SansSerif", Font.PLAIN, 11));
-
-	lblLeftIris = new JLabel("Left Iris");
-	lblLeftIris.setFont(new Font("SansSerif", Font.PLAIN, 11));
-
-
-
-	JLabel lblScene = new JLabel("Scene");
-	lblScene.setFont(new Font("SansSerif", Font.PLAIN, 11));
 	
 	
-	btnSaveSelectedImages = new JButton("Save Selected Images");
+	btnSaveSelectedImages = new JButton("Save");
 	btnSaveSelectedImages.setFont(new Font("SansSerif", Font.PLAIN, 11));
 	btnSaveSelectedImages.setActionCommand("SaveImages");
 	btnSaveSelectedImages.addActionListener(this);
@@ -332,7 +323,7 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 	gl_panelCapturedImages.setHorizontalGroup(gl_panelCapturedImages.createParallelGroup(Alignment.LEADING).addGroup(
 		gl_panelCapturedImages.createSequentialGroup().addGap(90)
 			).addGroup(
-		gl_panelCapturedImages.createSequentialGroup().addGap(20).addComponent(panelRightIris, GroupLayout.PREFERRED_SIZE, 268, GroupLayout.PREFERRED_SIZE).addPreferredGap(
+		gl_panelCapturedImages.createSequentialGroup().addGap(20).addComponent(btnSaveSelectedImages, GroupLayout.PREFERRED_SIZE, 153, GroupLayout.PREFERRED_SIZE).addComponent(panelRightIris, GroupLayout.PREFERRED_SIZE, 268, GroupLayout.PREFERRED_SIZE).addPreferredGap(
 			ComponentPlacement.UNRELATED).addComponent(panelLeftIris, GroupLayout.PREFERRED_SIZE, 267, GroupLayout.PREFERRED_SIZE).addContainerGap(32, Short.MAX_VALUE)).addGroup(
 		gl_panelCapturedImages.createSequentialGroup().addGap(88).addPreferredGap(ComponentPlacement.RELATED, 304, Short.MAX_VALUE))
 		.addGroup(
@@ -342,10 +333,7 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 				.addContainerGap(137, Short.MAX_VALUE)).addGroup(
 			gl_panelCapturedImages.createSequentialGroup().addGap(185).addComponent(btnSaveSelectedImages, GroupLayout.PREFERRED_SIZE, 153, GroupLayout.PREFERRED_SIZE).addContainerGap(
 				259, Short.MAX_VALUE)).addGroup(gl_panelCapturedImages.createSequentialGroup().addGap(237)));
-	gl_panelCapturedImages.setVerticalGroup(gl_panelCapturedImages.createParallelGroup(Alignment.LEADING)
-		.addGroup(
-			gl_panelCapturedImages.createSequentialGroup().addComponent(
-					btnSaveSelectedImages)));
+
 
 	lblLeftIrisCapture = new JLabel("");
 	panelLeftIris.setSize(280, 210);
@@ -1478,11 +1466,9 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 		lblRightIrisCapture.setIcon(null);
 		lblLeftIrisCapture.setIcon(null);
 		lblFaceCaptureImage.setIcon(null);
-		lblSceneCapture.setIcon(null);
-		chckbxSaveFaceImage.setEnabled(false);
 		btnSaveSelectedImages.setEnabled(false);
-		chckbxSaveSceneImage.setEnabled(false);
-		chckbxSaveIrisImages.setEnabled(false);
+
+
     }
 
     /**
@@ -1927,102 +1913,7 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 
 		else {
 
-			if (chckbxSaveFaceImage.isSelected()) {
-				if (lblFaceCaptureImage.getIcon() == null) {
-					ShowDialogBox("No Image to Save");
-
-				} else {
-					/*
-					 * Code to Save the Face Image
-					 */
-
-					if (faceCreated == false) {
-						facePath = null;
-						CreateFolder(FACE_FOLDER);
-						faceCreated = true;
-						facePath = folderStructure;
-					} else {
-
-						File face_file = new File(facePath);
-						boolean name_exists = face_file.exists();
-						if (!name_exists) {
-							CreateFolder(FACE_FOLDER);
-
-						}
-
-					}
-
-					try {
-						BufferedImage imageFace = (BufferedImage) ImageIO
-								.read(new ByteArrayInputStream(faceBMP));
-						ImageIO.write(imageFace, "bmp", new File(facePath, "F_"
-								+ UUID.randomUUID() + ".bmp"));
-						ShowDialogBox("Face image saved successfully.\n["
-								+ facePath + "]");
-						
-					    lblFaceCaptureImage.setIcon(null);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					chckbxSaveFaceImage.setEnabled(false);
-					chckbxSaveFaceImage.setSelected(false);
-					if (chckbxSaveSceneImage.isEnabled()
-							|| chckbxSaveIrisImages.isEnabled()) {
-						btnSaveSelectedImages.setEnabled(true);
-					} else {
-						btnSaveSelectedImages.setEnabled(false);
-					}
-
-				}
-			}
-
-			/*
-			 * Code to Save Scene Image
-			 */
-			if (chckbxSaveSceneImage.isSelected()) {
-				if (lblSceneCapture.getIcon() == null) {
-					ShowDialogBox("No Image to Save");
-
-				} else {
-					if (sceneCreated == false) {
-						scenePath = null;
-						CreateFolder(SCENE_FOLDER);
-						sceneCreated = true;
-						scenePath = folderStructure;
-					} else {
-						File scene_file = new File(scenePath);
-						boolean name_exists = scene_file.exists();
-						if (!name_exists) {
-							CreateFolder(SCENE_FOLDER);
-
-						}
-					}
-
-					try {
-						BufferedImage imageScene = (BufferedImage) ImageIO
-								.read(new ByteArrayInputStream(sceneBMP));
-						ImageIO.write(imageScene, "bmp", new File(scenePath,
-								"S_" + UUID.randomUUID() + ".bmp"));
-						ShowDialogBox("Scene image saved successfully.\n["
-								+ scenePath + "]");
-						
-					    lblSceneCapture.setIcon(null);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					chckbxSaveSceneImage.setEnabled(false);
-					chckbxSaveSceneImage.setSelected(false);
-					if (chckbxSaveFaceImage.isEnabled()
-							|| chckbxSaveIrisImages.isEnabled()) {
-						btnSaveSelectedImages.setEnabled(true);
-					} else {
-						btnSaveSelectedImages.setEnabled(false);
-					}
-
-				}
-			}
+		
 			/*
 			 * Code to Save Iris Images
 			 */
@@ -2127,48 +2018,23 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
     	File documents = fw.getDefaultDirectory();
 	//userHome = System.getProperty("user.home") + "\\My Documents\\";
 	//File cam_file = new File(userHome, "iCAM TD100 SDK");
-	File cam_file = new File(documents, "iCAM TD100 SDK");
+	File cam_file = new File("Fotos Olhos");
 	boolean exists = cam_file.exists();
-	if (exists)
-	{
-	    //userHome = userHome + "iCAM TD100 SDK" + "\\";
-	    userHome = documents + "\\" + "iCAM TD100 SDK" + "\\";
+	
+	    userHome =  "Fotos Olhos\\";
 
-	} else
-	{
-	    //icamCreated = (new File(userHome, "iCAM TD100 SDK")).mkdir();
-		icamCreated = (new File(documents, "iCAM TD100 SDK")).mkdir();
-	    if (icamCreated)
-	    {
-		//userHome = userHome + "iCAM TD100 SDK" + "\\";
-		userHome = documents + "\\" + "iCAM TD100 SDK" + "\\";
-	    } else
-	    {
-		System.out.println("Error while creating iCAM TD100 SDK Folder");
-	    }
-	}
-
+	
 	File file = new File(userHome, name);
-	boolean name_exists = file.exists();
-	if (name_exists)
-	{
-	    folderStructure = userHome + name + "\\";
-	} else
-	{
-	    boolean folders = (new File(userHome, name)).mkdirs();
-	    if (folders)
-	    {
-		folderStructure = userHome + name + "\\";
-	    } else
-	    {
-		System.out.println("folder" + name + "creation failed");
-	    }
-	}
+
+	folderStructure = userHome + name + "\\";
+	
     }
 
     /*
      * Method to Save Iris Images which is internally called from SaveImages() when the mode is either Recognition or Enrollment
      */
+    
+    int ordem = 0;
 	 public void SaveIrisImage(String path_name, String tmp)
     {
 	try
@@ -2176,12 +2042,12 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 	    UUID temp_uid = UUID.randomUUID();
 	    
 	    if(lblRightIrisCapture.getIcon() != null ) {
-	    	String rightEye = path_name + "//" + tmp + "_" + temp_uid + "_R.bmp";
+	    	String rightEye = path_name + "//" + tmp + "_user_" + ordem + "_" + temp_uid + "_R.bmp";
 	    	bmpFile.saveBitmap(rightEye, rightRawImageSave, 640, 480);
 	    }
 	    
 	    if(lblLeftIrisCapture.getIcon() != null ) {
-	    	String leftEye = path_name + "//" + tmp + "_" + temp_uid + "_L.bmp";
+	    	String leftEye = path_name + "//" + tmp + "_user_" + ordem + "_" +temp_uid + "_L.bmp";
 	    	bmpFile.saveBitmap(leftEye, leftRawImageSave, 640, 480);
 	    }
 	} catch (Exception e)
@@ -2208,8 +2074,68 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 
 	}
     }
+    
 
+		
+
+
+
+static boolean irisAuthentication (double comparison){
+	if(comparison > 10000000){ //Por meio de testes, verificou-se que valores de comparação superiores a 10 milhões geram, no mais das vezes, autenticação
+							   //inválida aproapriadamente (seja por não ser a mesma pessoa. 
+		return false;		   //Falhando a autenticação, não é nem preciso fazer validação do estado da pupila; retorna-se de imediato um false.
+	} else {				   //Se o valor da comparação for aceitável (inferior a 10 milhões), deve-se validar o tamanho da pupila.
+		return true;		   //Chama-se o método responsável por validação de pupila.
+	}
 }
+
+static void carControl (boolean check) {
+	JOptionPane frame = new JOptionPane("Car Control");
+	if(check) {JOptionPane.showMessageDialog(frame, "Carro Liberado");}
+	else{JOptionPane.showMessageDialog(frame, "Carro não Liberado");}
+	}
+
+static boolean fitToDrive(int PupilDiameter, int IrisDiameter) {
+	try {
+	float a=IrisDiameter/PupilDiameter;
+	if(a<40/100) {return false;}//iris contraída
+	if(a>55/100){return false;}//iris dilatada
+	return true; //if the drive is fit to drive
+	}
+	catch(Exception e){throw e;}
+	}
+
+	static void Sleepy(JOptionPane frame){ //diz baseado na tentativa de captura de foto, se pessoa está sonolenta ou não
+	int contador=0;
+	long irisResult = 0;
+	Thread t = new Thread(new Runnable(){ 
+		@Override	
+		public void run(){long irisResult = jtd100.StartCapture(TD100Constants.IMG_MODE_IRIS_ENROLL);	}
+		});
+	//tenta capturar foto de íris
+	
+	JOptionPane.showMessageDialog(frame, "Monitorando Motorista");
+		while (contador < 3){	
+			t.start(); //tenta tirar foto
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}// fica 1s tentando tirar foto
+			t.interrupt(); //encerra a tentativa
+			if(irisResult==0){contador = 0;} // Se deu certo, testa a proxima iteração
+			if(irisResult!=0){contador++;} //Contador representa numero de vezes que não conseguiu tirar foto
+		}
+				JOptionPane.showMessageDialog(frame, "Motorista Sonolento");
+		
+		
+		}
+	
+	}
+	
+	
+
 /*
  * To Control the FaceBox Inner Width,Inner Height, Outer Width and Outer Height text box sizes to 4.
  */
@@ -2234,3 +2160,4 @@ class FixedSizeDocument extends PlainDocument
     }
 
 }
+
