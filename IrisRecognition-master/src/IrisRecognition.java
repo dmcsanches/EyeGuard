@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
+
+import javax.swing.JOptionPane;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -48,10 +51,9 @@ public class IrisRecognition {
 	private Vector <Feature[]> irisDb = new Vector(); // iris database
 	private Vector <String> fileNames = new Vector(); // iris photos file names
 	
-	/**
-	 * 
-	 */
-
+	static int PupilDiameter = 50;
+	static int IrisDiameter = 0;
+	static double compare = 999999999;
 	Image image ;
 	
 	/**
@@ -151,7 +153,7 @@ public class IrisRecognition {
 		textPupilDiameterFound = new Text(groupIris, SWT.BORDER);
 		textPupilDiameterFound.setBounds(new Rectangle(500, 10, 42, 21));
 		textPupilDiameterFound.setEditable(false);
-		textPupilDiameterFound.setText("34");
+		textPupilDiameterFound.setText("44");
 		labelIrisDiameter = new Label(groupIris, SWT.NONE);
 		labelIrisDiameter.setBounds(new Rectangle(172, 16, 106, 15));
 		labelIrisDiameter.setText("Iris radius");
@@ -487,48 +489,71 @@ public class IrisRecognition {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		/* Before this is run, be sure to set up the launch configuration (Arguments->VM Arguments)
+				/* Before this is run, be sure to set up the launch configuration (Arguments->VM Arguments)
 		 * for the correct SWT library path in order to run with the SWT dlls. 
 		 * The dlls are located in the SWT plugin jar.  
 		 * For example, on Windows the Eclipse SWT 3.1 plugin jar is:
 		 *       installation_directory\plugins\org.eclipse.swt.win32_3.1.0.jar
 		 */
-		
 		EventQueue.invokeLater(new Runnable()
-		{
+			{
 		    public void run()
 		    {
-			try
-			{
-			    /*
-			     * The Point gives the co-ordinates of the Center of the
-			     * Screen excluding the taskbar. The UI Launches from the
-			     * points calculated below.
-			     */
-
-				MainFrame frame = new MainFrame();
-			    java.awt.Point screenCenter = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
-			    frame.setLocation(screenCenter.x - (frame.getWidth() / 2), screenCenter.y - (frame.getHeight() / 2));
-			    frame.setVisible(true);
-			} catch (Exception e)
-			{
-			    e.printStackTrace();
-			}
-		    }
-		});
+				try
+				{
+				    /*
+				     * The Point gives the co-ordinates of the Center of the
+				     * Screen excluding the taskbar. The UI Launches from the
+				     * points calculated below.
+				     */
+	
+					MainFrame frame = new MainFrame();
+				    java.awt.Point screenCenter = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
+				    frame.setLocation(screenCenter.x - (frame.getWidth() / 2), screenCenter.y - (frame.getHeight() / 2));
+				    frame.setVisible(true);
+				} catch (Exception e)
+				{
+				    e.printStackTrace();
+				}
+			    }
+			});
 		
+							
 		Display display = Display.getDefault();
 		IrisRecognition thisClass = new IrisRecognition();
 		thisClass.createSShell();
 		thisClass.sShell.open();
-
+	
 		while (!thisClass.sShell.isDisposed()) {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
 		display.dispose();
+		
+		JOptionPane frame = new JOptionPane("Car Monitor");
+		JOptionPane.showMessageDialog(frame, "Mensagem sonora do Motorista");
+		while(true) {
+			try {
+				TimeUnit.SECONDS.sleep(2);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(MainFrame.irisAuthentication(compare) && compare != 999999999){
+				if(MainFrame.fitToDrive(PupilDiameter, IrisDiameter)){
+				MainFrame.carControl(true);
+				
+				MainFrame.Sleepy(frame);
+					
+				}else{
+				MainFrame.carControl(false);
+				}
+				}
+			}
 	}
+		
+
+	
 
 	/**
 	 * This method initializes sShell
@@ -539,7 +564,7 @@ public class IrisRecognition {
 		sShell.setLayout(null);
 		textFileUrl = new Text(sShell, SWT.BORDER);
 		textFileUrl.setBounds(new Rectangle(15, 18, 215, 19));
-		textFileUrl.setText("res/osobaa1.jpg");
+		textFileUrl.setText("Fotos Olhos/Felipe_L_Ideal.bmp");
 		buttonFileUrl = new Button(sShell, SWT.NONE);
 		buttonFileUrl.setBounds(new Rectangle(240, 15, 101, 25));
 		buttonFileUrl.setText("Select file...");
@@ -614,6 +639,7 @@ public class IrisRecognition {
 					public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
 						System.out.println("Comparing iris with db"); 
 						compareResult.setText("Iris won:\n" + Database.compare(gabor, irisDb, fileNames));
+						compare = Integer.parseInt(Database.compare(gabor, irisDb, fileNames).split(": ")[1]);
 						compareResult.setVisible(true);
 					}
 				});
@@ -843,12 +869,14 @@ public class IrisRecognition {
 
 		int pupil_r = (int)(Integer.parseInt(textPupilDiameter.getText())*scalingFactor) ;
 		findCircleBruteForce(houghCircle2,pupil_r,origFiltered,width,height);
+		
 	}
 
 	private void hough() {
 		System.out.println("IRIS - Hough");
 
 		iris_r = (int)(Integer.parseInt(textIrisDiameter.getText())*scalingFactor) ;
+		IrisDiameter = iris_r;
 		houghCircle.init(origFiltered,width,height,iris_r);
 		houghCircle.setLines(1);
 		
@@ -913,7 +941,7 @@ public class IrisRecognition {
 	private void threadsCompleted(){
 		// Put diameter into textfield
 		textPupilDiameterFound.setText((int)(houghCircle2.r*1/scalingFactor)+"");
-
+		PupilDiameter = 2* (int)(houghCircle2.r*1/scalingFactor);
 		int pupil_x = houghCircle2.centerCords.x ;
 		int pupil_y = houghCircle2.centerCords.y ;
 		int pupil_r = houghCircle2.r ;
@@ -1186,6 +1214,6 @@ public class IrisRecognition {
                 saveBase.setVisible(true);
         }
         System.out.println("---------------------");
-}
+    }
 
 }
