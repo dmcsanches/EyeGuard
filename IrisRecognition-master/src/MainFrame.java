@@ -1,6 +1,7 @@
 
 import java.awt.EventQueue;
-import javax.imageio.ImageIO;
+//import javax.javax.imageio.ImageIO.javax.imageio.ImageIO;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -111,8 +112,8 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 	public static final String IMAGE_PATH = "images/App.png";
 	public static final String FACE_FOLDER = "Face";
 	public static final String SCENE_FOLDER = "Scene";
-	public static final String RECOGNITION_FOLDER = "res";
-	public static final String ENROLLMENT_FOLDER = "Fotos Olhos";
+	public static final String RECOGNITION_FOLDER = "Recog";
+	public static final String ENROLLMENT_FOLDER = "Cadastro";
 	
 	// Language
     public static final int LNG_NONE = 0;
@@ -128,8 +129,7 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
     StringBuffer versionNumber = null;
     Component components[] = null;
     JButton btnSaveSelectedImages;
-    JCheckBox chckbxSaveIrisImages;
-    
+ 
     private JPanel contentPaneIrisSampleApp, panelLiveImages;
     private JTextField txtSerialNumber, txtVersion, txtFieldInnerWidth;
     private JTextField txtFieldInnerHeight, txtFieldOuterWidth, txtFieldOuterHeight;
@@ -317,7 +317,7 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 	btnSaveSelectedImages.setFont(new Font("SansSerif", Font.PLAIN, 11));
 	btnSaveSelectedImages.setActionCommand("SaveImages");
 	btnSaveSelectedImages.addActionListener(this);
-	btnSaveSelectedImages.setEnabled(false);
+	btnSaveSelectedImages.setEnabled(true);
 	
 	gl_panelCapturedImages = new GroupLayout(panelCapturedImages);
 	gl_panelCapturedImages.setHorizontalGroup(gl_panelCapturedImages.createParallelGroup(Alignment.LEADING).addGroup(
@@ -765,7 +765,7 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 	    faceBMP = bmp;
 	    InputStream is = new ByteArrayInputStream(bmp);
 	   
-	    BufferedImage image = ImageIO.read(is);
+	    BufferedImage image = javax.imageio.ImageIO.read(is);
 	    BufferedImage img = new BufferedImage(1600, 1200, BufferedImage.TYPE_INT_RGB);
 	    Graphics g = img.getGraphics();
 	    g.drawImage(image, 0, 0, null);
@@ -855,7 +855,7 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 		    bmpFile.saveBitmap(rightEye, rightRawImage, 640, 480);
 		    File rightIrisFile = new File(currentdir, "RightEye.bmp");
 		    BufferedImage rightIris = new BufferedImage(640, 480, BufferedImage.TYPE_3BYTE_BGR);
-		    BufferedImage rightIrisImage = ImageIO.read(rightIrisFile);
+		    BufferedImage rightIrisImage = javax.imageio.ImageIO.read(rightIrisFile);
 		    Graphics g1 = rightIris.getGraphics();
 		    g1.drawImage(rightIrisImage, 0, 0, null);
 		    Image resizedRight = rightIris.getScaledInstance(lblRightIrisCapture.getWidth(), lblRightIrisCapture.getHeight(), Image.SCALE_DEFAULT);
@@ -868,7 +868,7 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 		    bmpFile.saveBitmap(leftEye, leftRawImage, 640, 480);
 		    File leftIrisFile = new File(currentdir, "LeftEye.bmp");
 		    BufferedImage leftIris = new BufferedImage(640, 480, BufferedImage.TYPE_3BYTE_BGR);
-		    BufferedImage leftIrisImage = ImageIO.read(leftIrisFile);
+		    BufferedImage leftIrisImage = javax.imageio.ImageIO.read(leftIrisFile);
 		    Graphics g2 = leftIris.getGraphics();
 		    g2.drawImage(leftIrisImage, 0, 0, null);
 		    Image resizedLeft = leftIris.getScaledInstance(lblRightIrisCapture.getWidth(), lblRightIrisCapture.getHeight(), Image.SCALE_DEFAULT);
@@ -876,8 +876,8 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 		    leftIrisFile.delete();
 	    }
 	    
-	    chckbxSaveIrisImages.setEnabled(true);
-	    btnSaveSelectedImages.setEnabled(true);
+
+	 
 	    lblLiveImage.setIcon(null);
 
 	    /* Fix for Elementool issue #629::Enable Sleep button */
@@ -906,13 +906,12 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 			return;
 		
 		InputStream is = new ByteArrayInputStream(liveImage);
-	    BufferedImage image = ImageIO.read(is);
+	   // BufferedImage image = javax.imageio.ImageIO.read(is);
 	    /*
 	     * Image is scaled as per the lblLiveImage width and height
 	     */
-	    Image resizedImage = image.getScaledInstance(lblLiveImage.getWidth(), lblLiveImage.getHeight(), Image.SCALE_SMOOTH);
-	    Graphics g = image.getGraphics();
-	    g.drawImage(image, 0, 0, null);
+	  //  Image resizedImage = image.getScaledInstance(lblLiveImage.getWidth(), lblLiveImage.getHeight(), Image.SCALE_SMOOTH);
+
 	    /*
 	     * On checking the ShowFaceBox and when the mode if Face the Draw
 	     * Rectangle function is called to show the face box on the Image
@@ -920,15 +919,15 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 	    //if ((chckbxShowFaceBox.isSelected()) && (actionCommand.equalsIgnoreCase("CaptureFace")) && toggle_face)
 	    if ((chckbxShowFaceBox.isSelected()) && faceCaptureInProgress && toggle_face)
 	    {
-		DrawRectangle(g, resizedImage, image.getWidth(), image.getHeight());
-		lblLiveImage.setIcon(new ImageIcon(resizedImage));
+	//	DrawRectangle(g, resizedImage, image.getWidth(), image.getHeight());
+		//lblLiveImage.setIcon(new ImageIcon(resizedImage));
 
 	    } else
 	    {
 
-	    lblLiveImage.setIcon(new ImageIcon(resizedImage));
+	//    lblLiveImage.setIcon(new ImageIcon(resizedImage));
 	    }
-	  g.dispose();
+	 // g.dispose();
 
 	} catch (Exception ex)
 	{
@@ -988,11 +987,11 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 	{
 	    sceneBMP = bmp;
 	    InputStream is = new ByteArrayInputStream(bmp);
-	    BufferedImage image = ImageIO.read(is);
+	    BufferedImage image = javax.imageio.ImageIO.read(is);
 	    BufferedImage img = new BufferedImage(1600, 1200, BufferedImage.TYPE_INT_RGB);
 	    Graphics g = img.getGraphics();
 	    g.drawImage(image, 0, 0, null);
-	    Image scaledImage = img.getScaledInstance(lblSceneCapture.getWidth(), lblSceneCapture.getHeight(), Image.SCALE_DEFAULT);
+	    Image scaledImage = img.getScaledInstance(25, 25, Image.SCALE_DEFAULT);
 	    lblSceneCapture.setIcon(new ImageIcon(scaledImage));
 	    chckbxSaveSceneImage.setEnabled(true);
 	    btnSaveSelectedImages.setEnabled(true);
@@ -1315,12 +1314,7 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 	    
 	    chckbxSaveFaceImage.setEnabled(false);
 	    btnSaveSelectedImages.setEnabled(false);
-	    chckbxSaveSceneImage.setEnabled(false);
-	    chckbxSaveIrisImages.setEnabled(false);
-	    chckbxSaveFaceImage.setSelected(false);
-	    chckbxSaveSceneImage.setSelected(false);
-	    chckbxSaveIrisImages.setSelected(false);
-	    btnCaptureIris.setText("Capture Iris");
+	  btnCaptureIris.setText("Capture Iris");
 	    	    
 	    components = panelIris.getComponents();
 	    for (int comp = 0; comp < components.length; comp++)
@@ -1333,10 +1327,7 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 	    txtFieldInnerHeight.setEnabled(true);
 	    txtFieldOuterWidth.setEnabled(true);
 	    txtFieldOuterHeight.setEnabled(true);
-	    chckbxShowFaceBox.setSelected(true);
-	    chckbxSaveIrisImages.setSelected(false);
-	    chckbxSaveFaceImage.setSelected(false);
-	    chckbxSaveSceneImage.setSelected(false);
+
 	    faceCaptureInProgress = false;
 	    
 	    /* Fix for Elementool issue #629::Enable Sleep button */
@@ -1598,14 +1589,7 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 	btnSleep.setVisible(false);
 	btnWakeup.setVisible(true);
 	btnWakeup.setEnabled(true);
-	chckbxSaveFaceImage.setSelected(false);
-	chckbxSaveSceneImage.setSelected(false);
-	chckbxSaveIrisImages.setSelected(false);
-	chckbxSaveFaceImage.setEnabled(false);
 	btnSaveSelectedImages.setEnabled(false);
-	chckbxSaveSceneImage.setEnabled(false);
-	chckbxSaveIrisImages.setEnabled(false);
-	
 	faceCaptureInProgress = false;
 	
 	long sleepResult = jtd100.Sleep();
@@ -1668,10 +1652,7 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 	    txtSerialNumber.setText(sbSerialNumber.toString());
 	    jtd100.StartCapture(TD100Constants.IMG_MODE_SCENE);
 	    jtd100.SetFocusPosition(1, 7);
-	    chckbxSaveFaceImage.setSelected(false);
-	    btnSaveSelectedImages.setEnabled(false);
-	    chckbxSaveSceneImage.setSelected(false);
-	    chckbxSaveIrisImages.setSelected(false);
+
 	    components = panelCamera.getComponents();
 	    
 	    for (int comp = 0; comp < components.length; comp++) {
@@ -1904,14 +1885,7 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 	public void SaveImage() {
 		// TODO Auto-generated method stub
 
-		if (!chckbxSaveFaceImage.isSelected()
-				&& (!chckbxSaveSceneImage.isSelected())
-				&& (!chckbxSaveIrisImages.isSelected())) {
-
-			ShowDialogBox("No Image Selected to Save");
-		}
-
-		else {
+	{
 
 		
 			/*
@@ -1992,14 +1966,8 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 						}
 					}
 
-					chckbxSaveIrisImages.setEnabled(false);
-					chckbxSaveIrisImages.setSelected(false);
-					if (chckbxSaveSceneImage.isEnabled()
-							|| chckbxSaveFaceImage.isEnabled()) {
-						btnSaveSelectedImages.setEnabled(true);
-					} else {
-						btnSaveSelectedImages.setEnabled(false);
-					}
+					
+			
 				}
 			}
 		}
@@ -2012,22 +1980,44 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
     
     public void CreateFolder(String name)
     {
-        /* Fix for Elementool issue #626 */
-    	JFileChooser fr = new JFileChooser();  
-    	FileSystemView fw = fr.getFileSystemView();  
-    	File documents = fw.getDefaultDirectory();
-	//userHome = System.getProperty("user.home") + "\\My Documents\\";
-	//File cam_file = new File(userHome, "iCAM TD100 SDK");
+        
 	File cam_file = new File("Fotos Olhos");
 	boolean exists = cam_file.exists();
-	
-	    userHome =  "Fotos Olhos\\";
+	if (exists)
+	{
+	    //userHome = userHome + "iCAM TD100 SDK" + "\\";
+	    userHome =  "Fotos Olhos/";
 
-	
-	File file = new File(userHome, name);
+	} else
+	{
+	    //icamCreated = (new File(userHome, "iCAM TD100 SDK")).mkdir();
+		icamCreated = (new File("Fotos Olhos")).mkdir();
+	    if (icamCreated)
+	    {
+		//userHome = userHome + "iCAM TD100 SDK" + "\\";
+		userHome = "Fotos Olhos/";
+	    } else
+	    {
+		System.out.println("Error while creating iCAM TD100 SDK Folder");
+	    }
+	}
 
-	folderStructure = userHome + name + "\\";
-	
+	File file = new File("Fotos Olhos", name);
+	boolean name_exists = file.exists();
+	if (name_exists)
+	{
+	    folderStructure = userHome+  name + "/";
+	} else
+	{
+	    boolean folders = (new File(userHome, name)).mkdirs();
+	    if (folders)
+	    {
+		folderStructure = userHome+  name + "/";
+	    } else
+	    {
+		System.out.println("folder" + name + "creation failed");
+	    }
+	}
     }
 
     /*
@@ -2039,15 +2029,14 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
     {
 	try
 	{
-	    UUID temp_uid = UUID.randomUUID();
-	    
+	   
 	    if(lblRightIrisCapture.getIcon() != null ) {
-	    	String rightEye = path_name + "//" + tmp + "_user_" + ordem + "_" + temp_uid + "_R.bmp";
+	    	String rightEye = path_name + "/" + tmp + "_user_" + ordem + "_R.bmp";
 	    	bmpFile.saveBitmap(rightEye, rightRawImageSave, 640, 480);
 	    }
 	    
 	    if(lblLeftIrisCapture.getIcon() != null ) {
-	    	String leftEye = path_name + "//" + tmp + "_user_" + ordem + "_" +temp_uid + "_L.bmp";
+	    	String leftEye = path_name + "/" + tmp + "_user_" + ordem + "_L.bmp";
 	    	bmpFile.saveBitmap(leftEye, leftRawImageSave, 640, 480);
 	    }
 	} catch (Exception e)
@@ -2055,6 +2044,8 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 	    e.printStackTrace();
 	}
     }
+	 
+	 
 
     /*
      * Method to handle the Show Face Box Checkbox Select and Unselect && actionCommand.equalsIgnoreCase("CaptureFace")
@@ -2081,10 +2072,11 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 
 
 static boolean irisAuthentication (double comparison){
-	if(comparison > 10000000){ //Por meio de testes, verificou-se que valores de comparação superiores a 10 milhões geram, no mais das vezes, autenticação
-							   //inválida aproapriadamente (seja por não ser a mesma pessoa. 
+	if(comparison > (double) 10000000){ //Por meio de testes, verificou-se que valores de comparação superiores a 10 milhões geram, no mais das vezes, autenticação
+			System.out.println("NOPE");				   //inválida aproapriadamente (seja por não ser a mesma pessoa. 
 		return false;		   //Falhando a autenticação, não é nem preciso fazer validação do estado da pupila; retorna-se de imediato um false.
-	} else {				   //Se o valor da comparação for aceitável (inferior a 10 milhões), deve-se validar o tamanho da pupila.
+	} else {	
+		System.out.println("YUP");	//Se o valor da comparação for aceitável (inferior a 10 milhões), deve-se validar o tamanho da pupila.
 		return true;		   //Chama-se o método responsável por validação de pupila.
 	}
 }

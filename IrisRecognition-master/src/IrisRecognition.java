@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.math.BigDecimal;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
@@ -517,54 +518,58 @@ public class IrisRecognition {
 				}
 			    }
 			});
-		
+	
+
 							
 		Display display = Display.getDefault();
 		IrisRecognition thisClass = new IrisRecognition();
 		thisClass.createSShell();
 		thisClass.sShell.open();
 	
+			
 		while (!thisClass.sShell.isDisposed()) {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
 		display.dispose();
-		
-		JOptionPane frame = new JOptionPane("Car Monitor");
-		JOptionPane.showMessageDialog(frame, "Mensagem sonora do Motorista");
-		while(true) {
-			try {
-				TimeUnit.SECONDS.sleep(2);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			if(MainFrame.irisAuthentication(compare) && compare != 999999999){
-				if(MainFrame.fitToDrive(PupilDiameter, IrisDiameter)){
-				MainFrame.carControl(true);
-				
-				MainFrame.Sleepy(frame);
-					
-				}else{
-				MainFrame.carControl(false);
-				}
-				}
-			}
-	}
-		
+	
+		}
+	
 
 	
 
 	/**
 	 * This method initializes sShell
 	 */
+
+	public void carRoutine() {
+				try {
+				JOptionPane frame = new JOptionPane("Car Monitor");
+				JOptionPane.showMessageDialog(frame, "Monitora");
+				if(MainFrame.irisAuthentication(compare)){
+					if(MainFrame.fitToDrive(PupilDiameter, IrisDiameter)){
+					MainFrame.carControl(true);
+					
+					MainFrame.Sleepy(frame);
+						
+					}else{
+					MainFrame.carControl(false);
+					}
+					}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+		}
+	
 	private void createSShell() {
 		sShell = new Shell();
 		sShell.setSize(new Point(689, 684));
 		sShell.setLayout(null);
 		textFileUrl = new Text(sShell, SWT.BORDER);
 		textFileUrl.setBounds(new Rectangle(15, 18, 215, 19));
-		textFileUrl.setText("Fotos Olhos/Felipe_L_Ideal.bmp");
+		textFileUrl.setText("Fotos Olhos/Cadastro/E_user_0_R.bmp");
 		buttonFileUrl = new Button(sShell, SWT.NONE);
 		buttonFileUrl.setBounds(new Rectangle(240, 15, 101, 25));
 		buttonFileUrl.setText("Select file...");
@@ -624,7 +629,9 @@ public class IrisRecognition {
 				bazaLength.setText(fileNames.size() + " persons in DB.");
 				databaseAddButton.setVisible(false);
 				compareButton.setVisible(false);
+				
 			}
+
 		});
 		bazaLength = new Label(sShell, SWT.NONE);
 		bazaLength.setBounds(new Rectangle(138, 626, 128, 13));
@@ -639,8 +646,9 @@ public class IrisRecognition {
 					public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
 						System.out.println("Comparing iris with db"); 
 						compareResult.setText("Iris won:\n" + Database.compare(gabor, irisDb, fileNames));
-						compare = Integer.parseInt(Database.compare(gabor, irisDb, fileNames).split(": ")[1]);
+						compare = Double.valueOf(Database.compare(gabor, irisDb, fileNames).split(": ")[1].replaceAll("E", "E+0"));
 						compareResult.setVisible(true);
+						carRoutine();
 					}
 				});
 		compareResult = new Label(sShell, SWT.NONE);
