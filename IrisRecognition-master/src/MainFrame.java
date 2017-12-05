@@ -1158,6 +1158,9 @@ public class MainFrame extends JFrame implements ITD100Events, ActionListener
 	    	components[comp].setEnabled(false);
 	    }
 	    		    
+	
+	    
+	    
 	    //Disable all the controls in panelScene
 	    
 	    btnCaptureFace.setEnabled(false);
@@ -2083,45 +2086,112 @@ static boolean irisAuthentication (double comparison){
 
 static void carControl (boolean check) {
 	JOptionPane frame = new JOptionPane("Car Control");
-	if(check) {JOptionPane.showMessageDialog(frame, "Carro Liberado");}
-	else{JOptionPane.showMessageDialog(frame, "Carro não Liberado");}
+	if(check) {
+	jtd100.SetSoundVolume(10);
+	jtd100.PlayMessage(TD100Constants.PLAY_IDENTIFIED);
+	JOptionPane.showMessageDialog(frame, "Carro Liberado");}
+	else{
+	jtd100.SetSoundVolume(10);
+	jtd100.PlayMessage(TD100Constants.PLAY_REJECTED);
+	JOptionPane.showMessageDialog(frame, "Carro não Liberado");
 	}
+	}
+
+
+
 
 static boolean fitToDrive(int PupilDiameter, int IrisDiameter) {
 	try {
 	float a=IrisDiameter/PupilDiameter;
-	if(a<40/100) {return false;}//iris contraída
-	if(a>55/100){return false;}//iris dilatada
+	if(a<40/100) {
+		jtd100.SetSoundVolume(10);
+		jtd100.PlayMessage(TD100Constants.PLAY_DENIED);return false;
+	}//iris contraída
+	if(a>55/100){
+
+		jtd100.SetSoundVolume(10);
+		jtd100.PlayMessage(TD100Constants.PLAY_DENIED);return false;}//iris dilatada
+
+	jtd100.SetSoundVolume(10);
+	jtd100.PlayMessage(TD100Constants.PLAY_GRANTED);
 	return true; //if the drive is fit to drive
 	}
 	catch(Exception e){throw e;}
 	}
 
+
+
 	static void Sleepy(JOptionPane frame){ //diz baseado na tentativa de captura de foto, se pessoa está sonolenta ou não
 	int contador=0;
-	long irisResult = 0;
-	Thread t = new Thread(new Runnable(){ 
-		@Override	
-		public void run(){long irisResult = jtd100.StartCapture(TD100Constants.IMG_MODE_IRIS_ENROLL);	}
-		});
-	//tenta capturar foto de íris
+	long it=0;
 	
+	class CamT extends Thread {
+		long i = 0;
+		@Override	
+		public void run(){ i = jtd100.StartCapture(TD100Constants.IMG_MODE_IRIS_ENROLL);	
+		//jtd100.PressButton()
+		}
+		public long result() {return i;}
+		}
+	CamT t = new CamT();
+	//tenta capturar foto de íris
+	int count = 0;
 	JOptionPane.showMessageDialog(frame, "Monitorando Motorista");
-		while (contador < 3){	
-			t.start(); //tenta tirar foto
+	boolean isSleeping = false;
+
+		while (contador <= 8){
+			if(isSleeping && contador > 2) { {	
+
+				//jtd100.PlayMessage(TD100Constants.PLAY_SHUTTER);
+				jtd100.PlayMessage(TD100Constants.PLAY_TRY_AGAIN);
+				jtd100.SetLED(TD100Constants.LED_FAILURE);
+				Thread wait = new Thread (new Runnable() {@Override public void run() {try {
+					Thread.sleep(450);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}}});
+				wait.run();
+				try {
+					wait.join();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				}}
 			try {
-				Thread.sleep(1000);
+				
+				t.run();//tenta tirar foto
+				Thread wait = new Thread (new Runnable() {@Override public void run() {try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}}});
+				wait.run();
+				wait.join();
+				it=t.result();
+	
+				t.interrupt(); //encerra a tentativa
+				
+				
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}// fica 1s tentando tirar foto
-			t.interrupt(); //encerra a tentativa
-			if(irisResult==0){contador = 0;} // Se deu certo, testa a proxima iteração
-			if(irisResult!=0){contador++;} //Contador representa numero de vezes que não conseguiu tirar foto
+			contador++;
+			if(it!=0){contador = 0;
+			isSleeping = false;
+			}
+			if(it==0) {isSleeping = true;}
+			// Se deu certo, testa a proxima iteração
+			//Contador representa numero de vezes que não conseguiu tirar foto
 		}
-				JOptionPane.showMessageDialog(frame, "Motorista Sonolento");
-		
-		
+				jtd100.SetSoundVolume(10);
+				jtd100.PlayMessage(TD100Constants.PLAY_LOOK_INTO_MIRROR);
+				
+				
+				
 		}
 	
 	}

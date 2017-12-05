@@ -13,7 +13,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.util.Vector;
-import java.util.concurrent.TimeUnit;
+
 
 import javax.swing.JOptionPane;
 
@@ -61,6 +61,8 @@ public class IrisRecognition {
 	 * This method initializes canvasImage	
 	 *
 	 */
+
+	
 	private void createCanvasImage() {
 		canvasImage = new Canvas(sShell, SWT.NONE);
 		canvasImage.setBounds(new Rectangle(40, 61, 199, 124));
@@ -569,7 +571,7 @@ public class IrisRecognition {
 		sShell.setLayout(null);
 		textFileUrl = new Text(sShell, SWT.BORDER);
 		textFileUrl.setBounds(new Rectangle(15, 18, 215, 19));
-		textFileUrl.setText("Fotos Olhos/Cadastro/E_user_0_R.bmp");
+		textFileUrl.setText("Fotos Olhos/Cadastro/junk_R.bmp");
 		buttonFileUrl = new Button(sShell, SWT.NONE);
 		buttonFileUrl.setBounds(new Rectangle(240, 15, 101, 25));
 		buttonFileUrl.setText("Select file...");
@@ -658,6 +660,16 @@ public class IrisRecognition {
 		loadBase = new Button(sShell, SWT.NONE);
 		loadBase.setBounds(new Rectangle(463, 13, 94, 29));
 		loadBase.setText("Open db...");
+	try	{
+			 ObjectInputStream in = new ObjectInputStream(new FileInputStream("res/database.iris"));
+       	  Vector database = (Vector)in.readObject();
+       	  in.close();
+       	  irisDb = (Vector)database.get(0);
+       	  fileNames = (Vector)database.get(1);
+			  bazaLength.setVisible(true);
+			  bazaLength.setText("Base DB loaded");
+			  System.out.println("Opened database from res\\database.iris");
+		}catch(Exception e){}
 		loadBase.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
 				FileDialog dialog = new FileDialog(sShell, SWT.NULL);
